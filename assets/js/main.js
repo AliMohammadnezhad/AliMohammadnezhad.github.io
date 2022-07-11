@@ -196,45 +196,53 @@
     if ($.exists('#contact-form #submit')) {
       $('#st-alert').hide();
       $('#contact-form #submit').on('click', function () {
-        var name = $('#name').val();
-        var subject = $('#subject').val();
-        var phone = $('#phone').val();
-        var email = $('#email').val();
-        var msg = $('#msg').val();
+        var name = $('#Name').val();
+        var subject = $('#Subject').val();
+        var email = $('#Email').val();
+        var msg = $('#Message').val();
+        console.log(name)
+        console.log(subject)
+        console.log(email)
+        console.log(msg)
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 
         if (!regex.test(email)) {
-          $('#st-alert').fadeIn().html('<div class="alert alert-danger"><strong>Warning!</strong> Please Enter Valid Email.</div>');
+         
+          Notify("Please Enter Valid Email.", null, null, 'danger');
           return false;
         }
 
-        name = $.trim(name);
-        subject = $.trim(subject);
-        phone = $.trim(phone);
-        email = $.trim(email);
-        msg = $.trim(msg);
 
         if (name != '' && email != '' && msg != '') {
-          var values = "name=" + name +
-            "&subject=" + subject +
-            "&phone=" + phone +
-            "&email=" + email +
-            "&msg=" + msg;
+          var values = "Name=" + name +
+            "&Subject=" + subject +
+            "&Email=" + email +
+            "&Message=" + msg;
           $.ajax({
             type: "POST",
-            url: "assets/php/mail.php",
+            url: "http://contactus.alimnd.ir/contact",
             data: values,
-            success: function () {
-              $('#name').val('');
-              $('#subject').val('');
-              $('#phone').val('');
-              $('#email').val('');
-              $('#msg').val('');
+            success: function (data) {
+              $('#Name').val('');
+              $('#Subject').val('');
+              $('#Email').val('');
+              $('#Message').val('');
+              console.log(data)
+              if(data.isSuccess){
+                  Notify(data.message, null, null, 'success');
 
-              $('#st-alert').fadeIn().html('<div class="alert alert-success"><strong>Success!</strong> Email has been sent successfully.</div>');
-              setTimeout(function () {
-                $('#st-alert').fadeOut('slow');
-              }, 4000);
+              }else{
+                var errorMessages = "";
+                if (data.message != null) {
+                    $.each(data.data, function (index, value) {
+                        errorMessages += value + '\n';
+                    })
+                }
+
+                Notify(errorMessages ,null, null, 'danger');
+
+              }
+    
             }
           });
         } else {
