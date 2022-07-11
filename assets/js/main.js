@@ -220,7 +220,7 @@
             "&Message=" + msg;
           $.ajax({
             type: "POST",
-            url: "http://contactus.alimnd.ir/contact",
+            url: "https://contactus.alimnd.ir/contact",
             data: values,
             success: function (data) {
               $('#Name').val('');
